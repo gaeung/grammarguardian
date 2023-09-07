@@ -33,6 +33,22 @@ const getUserInfo = async (value, field) => {
 
     return user;
   }
+
+  if (field === "userId") {
+    const user = await appDataSource.query(
+      `
+      SELECT
+        plan_type_id
+      FROM 
+        Users
+      WHERE
+        id = ?;
+      `,
+      [value]
+    );
+
+    return user;
+  }
 };
 
 const createUser = async (
