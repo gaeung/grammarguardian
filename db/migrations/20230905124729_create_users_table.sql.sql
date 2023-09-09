@@ -10,7 +10,7 @@ CREATE TABLE Users (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (social_type_id) REFERENCES SocialTypes(id),
-    FOREIGN KEY (plan_type_id) REFERENCES Plans(id)
+    FOREIGN KEY (plan_type_id) REFERENCES PlanTypes(id)
 );
 
 -- migrate:down
