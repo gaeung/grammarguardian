@@ -1,11 +1,16 @@
 const { asyncErrorHandler } = require("../utils/error");
 const paymentService = require("../services/paymentService");
-const userService = require("../services/userService");
+const logger = require("../utils/logger");
 
 const readyPayment = asyncErrorHandler(async (req, res) => {
+  const userId = req.userId;
   const planId = req.query.planId;
 
   const result = await paymentService.readyPayment(planId);
+
+  logger.info(
+    `User with ID ${userId} is attempting to ready payment for plan ${planId}`
+  );
 
   return res
     .status(200)
@@ -27,7 +32,10 @@ const processPayment = asyncErrorHandler(async (req, res) => {
     return res.status(500).json({ message: "Payment failed" });
   }
 
-  // 로거 추가하기
+  logger.info(
+    `User with ID ${userId} is processing payment for plan ${planId} with tid ${tid}`
+  );
+
   return res
     .status(200)
     .json({ message: "Payment and subscription have been completed." });
