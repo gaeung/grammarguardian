@@ -77,7 +77,22 @@ const createUser = async (
   );
 };
 
+const updateGrade = async (userId, newGrade) => {
+  return appDataSource.query(
+    `
+      UPDATE 
+        Users
+      SET 
+        plan_type_id = ?
+      WHERE 
+        id = ?;
+    `,
+    [newGrade, userId]
+  );
+};
+
 module.exports = {
   getUserInfo,
   createUser,
+  updateGrade,
 };
