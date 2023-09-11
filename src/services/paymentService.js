@@ -4,6 +4,7 @@ const moment = require("moment-timezone");
 const paymentDao = require("../models/paymentDao");
 const subscriptionDao = require("../models/subscriptionDao");
 const { throwCustomError } = require("../utils/error");
+const logger = require("../utils/logger");
 
 function getStartAndEndDate(date) {
   const utcTime = moment.tz(date, "UTC");
@@ -15,8 +16,8 @@ function getStartAndEndDate(date) {
 }
 
 const PlanName = Object.freeze({
-  2: "유료 회원",
-  3: "프리미엄 회원",
+  2: "유료 회원 정기 결제",
+  3: "프리미엄 회원 정기 결제",
 });
 
 const SubscriptionPrice = Object.freeze({
@@ -79,11 +80,13 @@ const processPayment = async (userId, planId, tid, pgToken) => {
       }
     );
 
+    const sid = kakaoPayProcess.data.sid;
     const paymentMethod = kakaoPayProcess.data.payment_method_type;
     const amount = kakaoPayProcess.data.amount.total;
 
     if (kakaoPayProcess.status === 200) {
-      const status = "Completed";
+      const paymentStatus = "Completed";
+      const subscriptionStatus = "Active";
       const { startDate, endDate } = getStartAndEndDate(
         kakaoPayProcess.data.approved_at
       );
@@ -92,42 +95,39 @@ const processPayment = async (userId, planId, tid, pgToken) => {
         await paymentDao.createPayment(
           userId,
           tid,
+          sid,
           planId,
           paymentMethod,
-          status,
+          paymentStatus,
           amount
         );
 
         await subscriptionDao.createSubscription(
           userId,
           planId,
+          tid,
+          sid,
+          subscriptionStatus,
           startDate,
           endDate
         );
 
         return { success: true };
       } catch (err) {
+        logger.error(
+          `Error processing payment for user with ID ${userId}. Error: ${err.message}`
+        );
         throwCustomError(
-          "An error occurred during the payment and subscription transaction",
+          "An error occurred during the first-time payment and subscription transaction",
           500
         );
       }
-    } else {
-      const paymentMethod = kakaoPayProcess.data.payment_method_type;
-      const status = "Failed";
-
-      await paymentDao.createPayment(
-        userId,
-        tid,
-        planId,
-        paymentMethod,
-        status,
-        amount
-      );
-
-      return { success: false };
     }
   } catch (err) {
+    logger.error(
+      `Error processing payment for user with ID ${userId}. Error: ${err.message}`
+    );
+
     throwCustomError(
       "Error occurred while attempting to process kakaopay",
       400

@@ -5,6 +5,7 @@ const helmet = require("helmet");
 
 const routes = require("./src/routes");
 const { errorHandler } = require("./src/utils/error");
+const subscription = require("./src/utils/subscription");
 
 const createApp = () => {
   const app = express();
@@ -19,6 +20,8 @@ const createApp = () => {
   app.get("/ping", (req, res) => {
     res.status(200).json({ message: "pong!" });
   });
+
+  subscription();
 
   return app;
 };

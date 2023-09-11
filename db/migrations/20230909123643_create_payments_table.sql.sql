@@ -3,6 +3,7 @@ CREATE TABLE Payments (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     tid VARCHAR(50) NOT NULL,
+    sid VARCHAR(50) NOT NULL,
     plan_type_id INT NOT NULL,
     method VARCHAR(20) NOT NULL,
     status ENUM('Completed', 'Failed', 'Cancelled') NOT NULL,
