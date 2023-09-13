@@ -12,7 +12,7 @@ const checkSubscription = async () => {
       FROM 
         Subscriptions
       WHERE 
-        status = "Active" AND end_date > NOW();
+        status = "Active" AND end_date <= NOW();
     `
   );
 };
