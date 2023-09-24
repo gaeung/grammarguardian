@@ -33,12 +33,13 @@ const processPayment = asyncErrorHandler(async (req, res) => {
   }
 
   logger.info(
-    `User with ID ${userId} is processing payment for plan ${planId} with tid ${tid}`
+    `User with ID ${userId} is processing payment for plan ${planId} with subcriptionId ${result.subscriptionId}}`
   );
 
-  return res
-    .status(200)
-    .json({ message: "Payment and subscription have been completed." });
+  return res.status(200).json({
+    subscriptionId: result.subscriptionId,
+    message: "Payment and subscription have been completed.",
+  });
 });
 
 module.exports = { readyPayment, processPayment };
