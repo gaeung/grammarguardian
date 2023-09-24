@@ -102,7 +102,7 @@ const processPayment = async (userId, planId, tid, pgToken) => {
           amount
         );
 
-        await subscriptionDao.createSubscription(
+        const createSubscription = await subscriptionDao.createSubscription(
           userId,
           planId,
           tid,
@@ -112,7 +112,7 @@ const processPayment = async (userId, planId, tid, pgToken) => {
           endDate
         );
 
-        return { success: true };
+        return { subscriptionId: createSubscription.insertId, success: true };
       } catch (err) {
         logger.error(
           `Error processing payment for user with ID ${userId}. Error: ${err.message}`
