@@ -33,6 +33,20 @@ const getSubscriptionInfo = async (userId) => {
   );
 };
 
+const getSubscriptionHistory = async (userId) => {
+  return await appDataSource.query(
+    `
+      SELECT
+        *
+      FROM
+        Subscriptions
+      WHERE
+        user_id = ?
+    `,
+    [userId]
+  );
+};
+
 const createSubscription = async (
   userId,
   planId,
@@ -83,9 +97,31 @@ const updateSubscription = async (userId, sid, planId, endDate) => {
   );
 };
 
+const inactivateSubscription = async (
+  userId,
+  sid,
+  subscriptionId,
+  inactivatedAt
+) => {
+  return await appDataSource.query(
+    `
+      UPDATE
+        Subscriptions
+      SET
+        status = "Inactive",
+        inactivated_at = ?
+      WHERE
+        id = ? AND user_id = ? AND sid = ?
+    `,
+    [inactivatedAt, subscriptionId, userId, sid]
+  );
+};
+
 module.exports = {
   checkSubscription,
   getSubscriptionInfo,
+  getSubscriptionHistory,
   createSubscription,
   updateSubscription,
+  inactivateSubscription,
 };

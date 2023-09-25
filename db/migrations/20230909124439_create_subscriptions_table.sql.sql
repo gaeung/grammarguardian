@@ -8,6 +8,7 @@ CREATE TABLE Subscriptions (
     status ENUM('Active', 'Inactive') NOT NULL,
     start_date DATETIME NOT NULL,
     end_date DATETIME NOT NULL,
+    inactivated_at DATETIME NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES Users(id),
